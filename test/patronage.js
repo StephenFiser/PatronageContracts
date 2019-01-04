@@ -43,12 +43,20 @@ contract('Patronage', async (accounts) => {
     });
   });
 
-  describe('createMonthlySubscription()', async () => {
+  describe('createMonthlySubscription()', () => {
     it('allows users to set up a monthly donation amount', async () => {
       await patronage.createMonthlySubscription(usdc.address, utils.toWei(20), { from: accounts[3] });
       let subscriptionAmount = await patronage.subscriptionAmountFor.call(accounts[3], usdc.address);
       let formattedAmount = subscriptionAmount.toNumber();
       formattedAmount.should.equal(Number(utils.toWei(20)));
+    });
+  });
+
+  describe('elapsedThirtyDayPeriods()', () => {
+    it('calculates the number of thirty day periods between a provided start and the current block time', async () => {
+      let elapsedCount = await patronage.elapsedThirtyDayPeriods.call(1530428912)
+      let formattedCount = elapsedCount.toNumber()
+      formattedCount.should.equal(6);
     });
   });
 

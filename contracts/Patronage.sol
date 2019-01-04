@@ -53,4 +53,8 @@ contract Patronage {
   function tokenAccepted(address _tokenAddress) public view returns (bool) {
     return acceptedTokens[_tokenAddress] == true;
   }
+
+  function elapsedThirtyDayPeriods(uint startTime) public view returns (uint) {
+    return (now - startTime) / 30 days;
+  }
 }
