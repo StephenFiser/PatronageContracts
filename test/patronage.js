@@ -50,6 +50,15 @@ contract('Patronage', async (accounts) => {
       let formattedAmount = subscriptionAmount.toNumber();
       formattedAmount.should.equal(Number(utils.toWei(20)));
     });
+
+    // it keeps track of amount available to pull
+    it('keeps track of the total amount of tokens available to redeem', async () => {
+      let redeemableAmount = await patronage.totalRedeemableAmount.call();
+      let formattedAmount = redeemableAmount.toNumber();
+      formattedAmount.should.equal(Number(utils.toWei(20)));
+    });
+    // it lets the benefactor pull all available tokens --> can we prevent this from running out of gas?
+    // it keeps track of amount pulled
   });
 
   describe('elapsedThirtyDayPeriods()', () => {

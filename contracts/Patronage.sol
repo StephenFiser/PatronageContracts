@@ -11,6 +11,7 @@ contract Patronage {
     address subscriberAddress;
     address tokenAddress;
     uint monthlyAmount;
+    uint startTime;
   }
 
   Subscription[] public subscriptions;
@@ -34,9 +35,21 @@ contract Patronage {
       subscriptions.push(Subscription({
         subscriberAddress: msg.sender,
         tokenAddress: tokenAddress,
-        monthlyAmount: monthlyAmount
+        monthlyAmount: monthlyAmount,
+        startTime: now
       }));
     }
+  }
+
+  function totalRedeemableAmount() public returns (uint) {
+    uint totalAmount = 0;
+    for(uint i = 0; i < subscriptions.length; i++) {
+      Subscription subscription = subscriptions[i];
+      uint redeemablePeriods = elapsedThirtyDayPeriods(subscription.startTime) + 1;
+      // TODO: subtract already redeemed amount!
+      totalAmount = redeemablePeriods * subscription.monthlyAmount;
+    }
+    return totalAmount;
   }
 
   function subscriptionAmountFor(address subscriberAddress, address tokenAddress) public returns (uint) {
