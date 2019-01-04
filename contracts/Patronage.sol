@@ -19,8 +19,10 @@ contract Patronage {
   }
 
   function donate(address tokenAddress, uint amount) public {
-    Token token = Token(tokenAddress);
-    require(token.transferFrom(msg.sender, benefactor, amount));
+    if (tokenAccepted(tokenAddress)) {
+      Token token = Token(tokenAddress);
+      require(token.transferFrom(msg.sender, benefactor, amount));
+    }
   }
 
 }

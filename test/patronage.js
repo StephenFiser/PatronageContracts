@@ -10,8 +10,10 @@ contract('Patronage', async (accounts) => {
   before(async () => {
     benefactor = accounts[0]
     usdc = await Token.new('United States Dollar Token', 'usdc', { from: accounts[3] });
+    euro = await Token.new('Euro', 'euro', { from: accounts[3] });
     patronage = await Patronage.new([usdc.address]);
     await usdc.approve(patronage.address, utils.toWei(1000000), { from: accounts[3] });
+    await euro.approve(patronage.address, utils.toWei(1000000), { from: accounts[3] });
   })
 
   describe('contructor', () => {
@@ -30,7 +32,14 @@ contract('Patronage', async (accounts) => {
     });
 
     it('does not accept tokens that are not whitelisted', async () => {
+      let currentBenefactorBalance = await euro.balanceOf.call(benefactor);
+      let formattedCurrentBalance = currentBenefactorBalance.toNumber();
 
+      await patronage.donate(euro.address, utils.toWei('100'), { from: accounts[3] });
+
+      let benefactorBalance = await euro.balanceOf.call(benefactor);
+      let formattedBalance = benefactorBalance.toNumber();
+      formattedBalance.should.equal(formattedCurrentBalance);
     });
   })
 
