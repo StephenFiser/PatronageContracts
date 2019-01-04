@@ -16,14 +16,14 @@ contract('Patronage', async (accounts) => {
     await euro.approve(patronage.address, utils.toWei(1000000), { from: accounts[3] });
   })
 
-  describe('contructor', () => {
+  describe('contructor()', () => {
     it('should have a whitelist of token addresses that the benefactor accepts', async () => {
       let tokenAccepted = await patronage.tokenAccepted.call(usdc.address);
       tokenAccepted.should.equal(true);
     });
   });
 
-  describe('donate', () => {
+  describe('donate()', () => {
     it('accepts one time donations and sends them to the benefactor', async () => {
       await patronage.donate(usdc.address, utils.toWei('100'), { from: accounts[3] }); // donate $100
       let benefactorBalance = await usdc.balanceOf.call(benefactor);
@@ -41,6 +41,15 @@ contract('Patronage', async (accounts) => {
       let formattedBalance = benefactorBalance.toNumber();
       formattedBalance.should.equal(formattedCurrentBalance);
     });
-  })
+  });
+
+  describe('createMonthlySubscription()', async () => {
+    it('allows users to set up a monthly donation amount', async () => {
+      await patronage.createMonthlySubscription(usdc.address, utils.toWei(20), { from: accounts[3] });
+      let subscriptionAmount = await patronage.subscriptionAmountFor.call(accounts[3], usdc.address);
+      let formattedAmount = subscriptionAmount.toNumber();
+      formattedAmount.should.equal(Number(utils.toWei(20)));
+    });
+  });
 
 });
